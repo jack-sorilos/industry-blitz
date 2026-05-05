@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Industry Blitz — Login</title>
+    <style>
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+            background: #f6f6f7;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .login-container {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            padding: 40px;
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+        .login-container h1 {
+            margin: 0 0 8px 0;
+            font-size: 28px;
+            color: #1a1a1a;
+        }
+        .login-container p {
+            margin: 0 0 30px 0;
+            color: #6d6d6d;
+            font-size: 14px;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #e3e3e3;
+            border-radius: 6px;
+            font-size: 14px;
+            margin-bottom: 16px;
+            font-family: monospace;
+        }
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #008060;
+            box-shadow: 0 0 0 3px rgba(0, 128, 96, 0.1);
+        }
+        button {
+            width: 100%;
+            padding: 12px;
+            background: #008060;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        button:hover {
+            background: #006e52;
+        }
+        .loading {
+            display: none;
+            text-align: center;
+            color: #6d6d6d;
+            margin-top: 16px;
+        }
+        .spinner {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #e3e3e3;
+            border-top: 3px solid #008060;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 8px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-container">
+        <h1>Industry Blitz</h1>
+        <p>Enter your territory code to access your accounts</p>
+        <form id="login-form">
+            <input
+                type="text"
+                id="territory-code"
+                name="territory_code"
+                placeholder="e.g., EMEA_SMB_All_All_A_D2C_01"
+                required
+                autocomplete="off"
+            >
+            <button type="submit">Login</button>
+            <div class="loading" id="loading">
+                <div class="spinner"></div>
+                <span>Loading your accounts...</span>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        document.getElementById('login-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const territoryCode = document.getElementById('territory-code').value.trim();
+
+            document.getElementById('login-form').style.display = 'none';
+            document.getElementById('loading').style.display = 'block';
+
+            try {
+                const res = await fetch('/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                    body: `territory_code=${encodeURIComponent(territoryCode)}`
+                });
+
+                if (res.ok) {
+                    setTimeout(() => window.location.href = '/', 1000);
+                } else {
+                    alert('Invalid territory code');
+                    document.getElementById('login-form').style.display = 'block';
+                    document.getElementById('loading').style.display = 'none';
+                }
+            } catch (err) {
+                alert('Login failed: ' + err.message);
+                document.getElementById('login-form').style.display = 'block';
+                document.getElementById('loading').style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>

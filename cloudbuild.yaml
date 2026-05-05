@@ -1,0 +1,57 @@
+substitutions:
+  _REGION: us-central1
+  _REPO: industry-blitz
+  _SERVICE: industry-blitz
+  _BQ_PROJECT: shopify-dw
+  _SECRETS: ""
+
+options:
+  logging: CLOUD_LOGGING_ONLY
+  machineType: E2_HIGHCPU_8
+
+steps:
+  - id: build
+    name: gcr.io/cloud-builders/docker
+    args:
+      - build
+      - --tag=${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/${_SERVICE}:$SHORT_SHA
+      - --tag=${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/${_SERVICE}:latest
+      - --cache-from=${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/${_SERVICE}:latest
+      - .
+
+  - id: push
+    name: gcr.io/cloud-builders/docker
+    args:
+      - push
+      - --all-tags
+      - ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/${_SERVICE}
+
+  - id: deploy
+    name: gcr.io/google.com/cloudsdktool/cloud-sdk:slim
+    entrypoint: bash
+    args:
+      - -c
+      - |
+        set -euo pipefail
+        flags=(
+          --image=${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/${_SERVICE}:$SHORT_SHA
+          --region=${_REGION}
+          --platform=managed
+          --no-allow-unauthenticated
+          --min-instances=1
+          --max-instances=10
+          --memory=1Gi
+          --cpu=1
+          --concurrency=40
+          --timeout=300
+          --service-account=${_SERVICE}-runtime@$PROJECT_ID.iam.gserviceaccount.com
+          --set-env-vars=FLASK_ENV=production
+        )
+        if [[ -n "${_SECRETS}" ]]; then
+          flags+=(--set-secrets="${_SECRETS}")
+        fi
+        gcloud run deploy ${_SERVICE} "${flags[@]}"
+
+images:
+  - ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/${_SERVICE}:$SHORT_SHA
+  - ${_REGION}-docker.pkg.dev/$PROJECT_ID/${_REPO}/${_SERVICE}:latest

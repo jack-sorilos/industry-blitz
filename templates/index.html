@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Industry Blitz</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+<!-- TOP BAR: Filter controls -->
+<header class="top-bar">
+    <div class="brand">Industry Blitz</div>
+    <div class="filters">
+        <select id="filter-tier" onchange="applyFilters()">
+            <option value="">All Tiers</option>
+            <option value="HOT">HOT (1–3)</option>
+            <option value="WARM">WARM (4–6)</option>
+            <option value="LOW">LOW (7–12)</option>
+        </select>
+        <div class="dropdown-filter">
+            <button class="dropdown-btn" onclick="toggleDropdown('industries')">Industries ▼</button>
+            <div id="industries-dropdown" class="dropdown-menu">
+                <label><input type="checkbox" onchange="clearIndustries()"> All Industries</label>
+                {% for ind in industries %}
+                <label><input type="checkbox" class="industry-checkbox" value="{{ ind }}" onchange="applyFilters()"> {{ ind }}</label>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="dropdown-filter">
+            <button class="dropdown-btn" onclick="toggleDropdown('countries')">Countries ▼</button>
+            <div id="countries-dropdown" class="dropdown-menu">
+                <label><input type="checkbox" onchange="clearCountries()"> All Countries</label>
+                {% for country in countries %}
+                <label><input type="checkbox" class="country-checkbox" value="{{ country }}" onchange="applyFilters()"> {{ country }}</label>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="dropdown-filter">
+            <button class="dropdown-btn" onclick="toggleDropdown('platforms')">Platforms ▼</button>
+            <div id="platforms-dropdown" class="dropdown-menu">
+                <label><input type="checkbox" onchange="clearPlatforms()"> All Platforms</label>
+                {% for plat in platforms %}
+                <label><input type="checkbox" class="platform-checkbox" value="{{ plat }}" onchange="applyFilters()"> {{ plat }}</label>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+    <button class="btn-refresh" onclick="triggerRefresh()">
+        ↻ Refresh Data
+    </button>
+</header>
+
+<!-- LOADING OVERLAY -->
+<div id="loading-overlay" class="hidden">
+    <div class="loading-spinner"></div>
+    <p id="loading-message">Pulling data from Salesforce...</p>
+</div>
+
+<!-- CARD AREA -->
+<main class="card-area">
+    <div class="card" id="main-card">
+
+        <!-- Card header -->
+        <div class="card-header">
+            <div class="card-title">
+                <h1 id="account-name">{{ accounts[0].Name if accounts else 'No Accounts' }}</h1>
+                <a id="account-website" href="#" target="_blank" class="website-link"></a>
+            </div>
+            <div class="card-badges">
+                <span id="tier-badge" class="badge badge-tier"></span>
+                <span id="priority-badge" class="badge badge-priority"></span>
+                <span id="industry-badge" class="badge badge-industry"></span>
+                <span id="platform-badge" class="badge badge-platform"></span>
+            </div>
+        </div>
+
+        <!-- Account meta -->
+        <div class="card-meta">
+            <div class="meta-item">
+                <label>GMV / Revenue</label>
+                <span id="account-revenue"></span>
+            </div>
+            <div class="meta-item">
+                <label>Platform</label>
+                <span id="account-platform"></span>
+            </div>
+            <div class="meta-item">
+                <label>Industry</label>
+                <span id="account-industry"></span>
+            </div>
+            <div class="meta-item">
+                <label>Country</label>
+                <span id="account-country"></span>
+            </div>
+            <div class="meta-item">
+                <label>Score</label>
+                <span id="account-score"></span>
+            </div>
+        </div>
+
+        <!-- Two-column body -->
+        <div class="card-body">
+
+            <!-- LEFT: Contacts -->
+            <section class="contacts-panel">
+                <h3>Contacts</h3>
+                <div id="contacts-list"></div>
+            </section>
+
+            <!-- RIGHT: AI Prep -->
+            <section class="prep-panel">
+                <div class="prep-header">
+                    <h3>Call Prep</h3>
+                    <button id="btn-generate" class="btn-generate" onclick="generatePrep()">
+                        Generate with AI
+                    </button>
+                </div>
+                <div id="prep-content">
+                    <p class="prep-placeholder">Click "Generate with AI" to create call prep for this account.</p>
+                </div>
+            </section>
+
+        </div>
+    </div>
+
+    <!-- Navigation arrows -->
+    <button class="nav-arrow nav-prev" onclick="navigate(-1)">❮</button>
+    <button class="nav-arrow nav-next" onclick="navigate(1)">❯</button>
+</main>
+
+<!-- BOTTOM BAR -->
+<footer class="bottom-bar">
+    <button class="btn-secondary" onclick="downloadCSV()">Download CSV</button>
+    <button class="btn-secondary" onclick="shuffleAccounts()">New Run (Shuffle)</button>
+    <span id="card-counter" class="counter">Account 1 of 0</span>
+</footer>
+
+<!-- Embedded account data as JSON -->
+<script id="accounts-data" type="application/json">
+{{ accounts | tojson }}
+</script>
+
+<script src="{{ url_for('static', filename='app.js') }}"></script>
+</body>
+</html>
