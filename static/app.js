@@ -109,9 +109,9 @@ function renderContacts(contacts) {
     el.innerHTML = contacts.map((c, idx) => {
         const name = `${c.FirstName || ''} ${c.LastName || ''}`.trim();
         const title = c.Title ? `<div class="contact-title">${c.Title}</div>` : '';
-        const mobile = c.MobilePhone ? `<div class="contact-mobile">📱 ${c.MobilePhone} <button class="btn-copy-small" onclick="copyToClipboard('mobile-${idx}')" title="Copy">📋</button><span id="mobile-${idx}" style="display:none">${c.MobilePhone}</span></div>` : '';
-        const phone = c.Phone ? `<div class="contact-phone">☎ ${c.Phone} <button class="btn-copy-small" onclick="copyToClipboard('phone-${idx}')" title="Copy">📋</button><span id="phone-${idx}" style="display:none">${c.Phone}</span></div>` : '';
-        const email = c.Email ? `<div class="contact-email"><a href="mailto:${c.Email}">${c.Email}</a> <button class="btn-copy-small" onclick="copyToClipboard('email-${idx}')" title="Copy">📋</button><span id="email-${idx}" style="display:none">${c.Email}</span></div>` : '';
+        const mobile = c.MobilePhone ? `<div class="contact-mobile">📱 ${c.MobilePhone} <button class="btn-copy-small" onclick="copyToClipboard('mobile-${idx}', this)" title="Copy">📋</button><span id="mobile-${idx}" style="display:none">${c.MobilePhone}</span></div>` : '';
+        const phone = c.Phone ? `<div class="contact-phone">☎ ${c.Phone} <button class="btn-copy-small" onclick="copyToClipboard('phone-${idx}', this)" title="Copy">📋</button><span id="phone-${idx}" style="display:none">${c.Phone}</span></div>` : '';
+        const email = c.Email ? `<div class="contact-email"><a href="mailto:${c.Email}">${c.Email}</a> <button class="btn-copy-small" onclick="copyToClipboard('email-${idx}', this)" title="Copy">📋</button><span id="email-${idx}" style="display:none">${c.Email}</span></div>` : '';
         return `
             <div class="contact-card">
                 <strong>${name}</strong>
@@ -277,11 +277,10 @@ document.addEventListener('click', (e) => {
     }
 });
 
-function copyToClipboard(elementId) {
+function copyToClipboard(elementId, btn) {
     const el = document.getElementById(elementId);
     const text = el.textContent;
     navigator.clipboard.writeText(text).then(() => {
-        const btn = event.target;
         const originalText = btn.textContent;
         btn.textContent = '✓';
         btn.style.color = '#008060';
