@@ -85,6 +85,8 @@ def pull_accounts(org_alias: str = "BanffProd", territory_code: str = None) -> l
                     })
         account["Contacts"] = contacts
         account["revenue_formatted"] = _format_revenue(account.get("AnnualRevenue"))
-        all_accounts.append(account)
+        # Only include accounts with at least one valid contact
+        if contacts:
+            all_accounts.append(account)
 
     return all_accounts
