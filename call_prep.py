@@ -59,14 +59,11 @@ def _build_prompt(account: dict) -> str:
     prompt = f"""Quick prep for {name} ({industry} on {platform}, {revenue} GMV, {country}).
 
 Generate:
-1. A brief opening line (Jason Bay style — direct, value-focused, no fluff). Max 1-2 sentences. Example: "Hi this is Jack from Shopify. We work with leading {industry} brands moving to Plus to handle 10x growth."
-2. ONE-LINER bullets only:
-- 3 talking points (headline only)
-- 3 discovery questions (one line each)
-- 3 objections (objection + one-line response)
+1. A brief opening line (Jason Bay style — direct, value-focused, no fluff). Max 1-2 sentences.
+2. ONE-LINER bullets only: 3 talking points, 3 discovery questions, 3 objections with responses.
 
-Return JSON:
-{{"intro": "opening line here", "talking_points": [{{"headline": "one-liner", "detail": ""}}], "discovery_questions": [{{"question": "one-liner", "why": ""}}], "objection_handlers": [{{"objection": "one-liner", "response": "one-liner"}}]}}"""
+Return ONLY this JSON (no other text, no markdown, no escapes):
+{{"intro": "brief opening", "talking_points": [{{"headline": "point 1", "detail": ""}}], "discovery_questions": [{{"question": "question 1", "why": ""}}], "objection_handlers": [{{"objection": "objection 1", "response": "response 1"}}]}}"""
 
     return prompt
 
@@ -102,10 +99,14 @@ def generate_call_prep(account: dict) -> dict:
             raw_fixed = raw + ']}' if not raw.endswith('}') else raw
             prep = json.loads(raw_fixed)
         except:
+            import sys
+            print(f"DEBUG: JSON Parse Error - {str(e)}", file=sys.stderr)
+            print(f"DEBUG: Raw response:\n{raw[:500]}", file=sys.stderr)
             prep = {
-                "talking_points": [{"headline": "Generation error", "detail": str(e)[:200]}],
-                "discovery_questions": [],
-                "objection_handlers": [],
+                "intro": "Unable to generate at the moment. Try again.",
+                "talking_points": [{"headline": "API parsing error", "detail": "Please try regenerating"}],
+                "discovery_questions": [{"question": "What are your key priorities?", "why": "To understand needs"}],
+                "objection_handlers": [{"objection": "Timing isn't right", "response": "When would be better to reconnect?"}],
                 "error": True
             }
 
