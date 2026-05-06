@@ -106,12 +106,12 @@ function renderContacts(contacts) {
         el.innerHTML = '<p class="text-muted">No contacts on record.</p>';
         return;
     }
-    el.innerHTML = contacts.map(c => {
+    el.innerHTML = contacts.map((c, idx) => {
         const name = `${c.FirstName || ''} ${c.LastName || ''}`.trim();
         const title = c.Title ? `<div class="contact-title">${c.Title}</div>` : '';
-        const mobile = c.MobilePhone ? `<div class="contact-mobile">📱 ${c.MobilePhone}</div>` : '';
-        const phone = c.Phone ? `<div class="contact-phone">☎ ${c.Phone}</div>` : '';
-        const email = c.Email ? `<div class="contact-email"><a href="mailto:${c.Email}">${c.Email}</a></div>` : '';
+        const mobile = c.MobilePhone ? `<div class="contact-mobile">📱 ${c.MobilePhone} <button class="btn-copy-small" onclick="copyToClipboard('mobile-${idx}')" title="Copy">📋</button><span id="mobile-${idx}" style="display:none">${c.MobilePhone}</span></div>` : '';
+        const phone = c.Phone ? `<div class="contact-phone">☎ ${c.Phone} <button class="btn-copy-small" onclick="copyToClipboard('phone-${idx}')" title="Copy">📋</button><span id="phone-${idx}" style="display:none">${c.Phone}</span></div>` : '';
+        const email = c.Email ? `<div class="contact-email"><a href="mailto:${c.Email}">${c.Email}</a> <button class="btn-copy-small" onclick="copyToClipboard('email-${idx}')" title="Copy">📋</button><span id="email-${idx}" style="display:none">${c.Email}</span></div>` : '';
         return `
             <div class="contact-card">
                 <strong>${name}</strong>
@@ -276,6 +276,23 @@ document.addEventListener('click', (e) => {
         document.querySelectorAll('.dropdown-menu').forEach(m => m.classList.remove('open'));
     }
 });
+
+function copyToClipboard(elementId) {
+    const el = document.getElementById(elementId);
+    const text = el.textContent;
+    navigator.clipboard.writeText(text).then(() => {
+        const btn = event.target;
+        const originalText = btn.textContent;
+        btn.textContent = '✓';
+        btn.style.color = '#008060';
+        setTimeout(() => {
+            btn.textContent = originalText;
+            btn.style.color = '';
+        }, 1500);
+    }).catch(err => {
+        alert('Failed to copy: ' + err);
+    });
+}
 
 // Initial render
 renderCard();

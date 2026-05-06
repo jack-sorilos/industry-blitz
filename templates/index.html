@@ -65,6 +65,7 @@
         <div class="card-header">
             <div class="card-title">
                 <h1 id="account-name">{{ accounts[0].Name if accounts else 'No Accounts' }}</h1>
+                <button class="btn-copy" onclick="copyToClipboard('account-name')" title="Copy company name">📋</button>
                 <a id="account-website" href="#" target="_blank" class="website-link"></a>
             </div>
             <div class="card-badges">

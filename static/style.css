@@ -482,6 +482,38 @@ body {
     font-size: 13px;
 }
 
+.btn-copy {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 16px;
+    padding: 0 6px;
+    margin-left: 8px;
+    opacity: 0.6;
+    transition: opacity 0.2s;
+    vertical-align: middle;
+}
+
+.btn-copy:hover {
+    opacity: 1;
+}
+
+.btn-copy-small {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 12px;
+    padding: 0 4px;
+    margin-left: 4px;
+    opacity: 0.5;
+    transition: opacity 0.2s;
+    color: var(--accent);
+}
+
+.btn-copy-small:hover {
+    opacity: 1;
+}
+
 .error {
     color: var(--hot);
     font-size: 13px;
