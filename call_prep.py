@@ -57,13 +57,15 @@ def _build_prompt(account: dict) -> str:
 
     prompt = f"""Quick prep for {name} ({industry} on {platform}, {revenue} GMV, {country}).
 
-Generate ONE-LINER bullets only:
+Generate:
+1. A brief opening line (Jason Bay style — direct, value-focused, no fluff). Max 1-2 sentences. Example: "Hi this is Jack from Shopify. We work with leading {industry} brands moving to Plus to handle 10x growth."
+2. ONE-LINER bullets only:
 - 3 talking points (headline only)
 - 3 discovery questions (one line each)
 - 3 objections (objection + one-line response)
 
 Return JSON:
-{{"talking_points": [{{"headline": "one-liner", "detail": ""}}], "discovery_questions": [{{"question": "one-liner", "why": ""}}], "objection_handlers": [{{"objection": "one-liner", "response": "one-liner"}}]}}"""
+{{"intro": "opening line here", "talking_points": [{{"headline": "one-liner", "detail": ""}}], "discovery_questions": [{{"question": "one-liner", "why": ""}}], "objection_handlers": [{{"objection": "one-liner", "response": "one-liner"}}]}}"""
 
     return prompt
 

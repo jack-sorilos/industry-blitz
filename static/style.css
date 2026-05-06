@@ -420,6 +420,17 @@ body {
     line-height: 1.6;
 }
 
+.prep-intro {
+    background: #f0f9f7;
+    border-left: 4px solid var(--accent);
+    padding: 12px;
+    margin-bottom: 20px;
+    border-radius: 4px;
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--text-primary);
+}
+
 .prep-section {
     margin-bottom: 20px;
 }

@@ -159,6 +159,11 @@ function renderPrep(prep) {
 
     let html = '<div class="prep-content">';
 
+    // Opening Intro
+    if (prep.intro) {
+        html += `<div class="prep-intro"><strong>${prep.intro}</strong></div>`;
+    }
+
     // Talking Points
     if (prep.talking_points && prep.talking_points.length) {
         html += '<div class="prep-section"><h4>Talking Points</h4>';
