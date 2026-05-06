@@ -5,7 +5,7 @@ import requests
 
 _prep_cache = {}
 
-SYSTEM_PROMPT = """Generate brief call prep with one-liner bullet points only. No paragraphs. Return valid JSON only."""
+SYSTEM_PROMPT = """Generate brief call prep with one-liner bullet points only. No paragraphs. Return ONLY valid JSON, no other text. Ensure all strings are properly escaped and closed."""
 
 def _call_proxy_api(prompt: str) -> str:
     """Call the Shopify AI Proxy with IAP authentication."""
@@ -50,10 +50,11 @@ def _build_prompt(account: dict) -> str:
     priority_score = account.get("priority_score", 0)
     priority_tier = account.get("priority_tier", "Unknown")
 
-    # Merchant context from Salesforce (strip HTML tags)
+    # Merchant context from Salesforce (strip HTML tags and escape newlines)
     merchant_overview = account.get("Merchant_Overview__c") or ""
     merchant_overview = re.sub(r'<[^>]+>', '', merchant_overview).strip()
-    overview_section = f"\nMERCHANT CONTEXT (from CRM): {merchant_overview[:500]}\nUse this context to personalise the talking points." if merchant_overview else ""
+    merchant_overview = merchant_overview.replace('\n', ' ').replace('\r', ' ')[:500]
+    overview_section = f"\nMERCHANT CONTEXT: {merchant_overview}\nUse this context to personalise the talking points." if merchant_overview else ""
 
     prompt = f"""Quick prep for {name} ({industry} on {platform}, {revenue} GMV, {country}).
 
