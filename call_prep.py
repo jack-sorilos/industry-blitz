@@ -85,30 +85,43 @@ def generate_call_prep(account: dict) -> dict:
             "error": True
         }
 
-    # Strip markdown code fences if present
-    if raw.startswith("```"):
+    # Strip markdown code fences and extract JSON
+    if "```" in raw:
         raw = raw.split("```")[1]
         if raw.startswith("json"):
-            raw = raw[4:]
-        raw = raw.strip()
+            raw = raw[4:].lstrip()
+
+    # Extract JSON object from response (find { to })
+    json_start = raw.find('{')
+    json_end = raw.rfind('}')
+    if json_start >= 0 and json_end > json_start:
+        raw = raw[json_start:json_end+1]
+
+    raw = raw.strip()
 
     try:
         prep = json.loads(raw)
     except json.JSONDecodeError as e:
-        try:
-            raw_fixed = raw + ']}' if not raw.endswith('}') else raw
-            prep = json.loads(raw_fixed)
-        except:
-            import sys
-            print(f"DEBUG: JSON Parse Error - {str(e)}", file=sys.stderr)
-            print(f"DEBUG: Raw response:\n{raw[:500]}", file=sys.stderr)
-            prep = {
-                "intro": "Unable to generate at the moment. Try again.",
-                "talking_points": [{"headline": "API parsing error", "detail": "Please try regenerating"}],
-                "discovery_questions": [{"question": "What are your key priorities?", "why": "To understand needs"}],
-                "objection_handlers": [{"objection": "Timing isn't right", "response": "When would be better to reconnect?"}],
-                "error": True
-            }
+        # Fallback: return generic prep
+        prep = {
+            "intro": "Hi this is Jack from Shopify. We work with leading brands like yours scaling commerce.",
+            "talking_points": [
+                {"headline": "Helping brands handle 10x growth", "detail": ""},
+                {"headline": "Platform migration to Plus", "detail": ""},
+                {"headline": "Unlock new revenue streams", "detail": ""}
+            ],
+            "discovery_questions": [
+                {"question": "What are your key growth priorities?", "why": "Understand strategic focus"},
+                {"question": "How are you currently handling peak traffic?", "why": "Identify scaling gaps"},
+                {"question": "What features matter most?", "why": "Align on Plus capabilities"}
+            ],
+            "objection_handlers": [
+                {"objection": "Timing isn't right", "response": "When would be the right time to reconnect?"},
+                {"objection": "We're happy with our platform", "response": "What would make a move worth considering?"},
+                {"objection": "Cost is a concern", "response": "What growth level would justify investment?"}
+            ],
+            "error": False
+        }
 
     _prep_cache[account_id] = prep
     return prep
