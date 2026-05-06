@@ -72,7 +72,9 @@ def pull_accounts(org_alias: str = "BanffProd", territory_code: str = None) -> l
         contacts = []
         if account.get("Contacts"):
             for contact in account["Contacts"]:
-                if contact.get("Email"):  # Only include contacts with email
+                email = contact.get("Email")
+                phone = contact.get("Phone") or contact.get("MobilePhone")
+                if email and phone:  # Only include contacts with both email and phone
                     contacts.append({
                         "FirstName": contact.get("FirstName"),
                         "LastName": contact.get("LastName"),
