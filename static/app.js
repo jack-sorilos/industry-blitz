@@ -253,7 +253,7 @@ async function triggerRefresh() {
 }
 
 function toggleDropdown(type) {
-    const dropdownId = type === 'industries' ? 'industries-dropdown' : 'platforms-dropdown';
+    const dropdownId = `${type}-dropdown`;
     const dropdown = document.getElementById(dropdownId);
     dropdown.classList.toggle('open');
 }
