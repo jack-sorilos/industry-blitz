@@ -159,9 +159,22 @@ function renderPrep(prep) {
 
     let html = '<div class="prep-content">';
 
-    // Opening Intro
-    if (prep.intro) {
-        html += `<div class="prep-intro"><strong>${prep.intro}</strong></div>`;
+    // Opening and Voicemail Scripts
+    if (prep.opening || prep.voicemail) {
+        html += '<div class="prep-section"><h4>Call Scripts</h4>';
+        if (prep.opening) {
+            html += `<div class="prep-script">
+                <div class="script-label">Opening (if they answer):</div>
+                <div class="script-text">${prep.opening}</div>
+            </div>`;
+        }
+        if (prep.voicemail) {
+            html += `<div class="prep-script">
+                <div class="script-label">Voicemail (22 sec max):</div>
+                <div class="script-text">${prep.voicemail}</div>
+            </div>`;
+        }
+        html += '</div>';
     }
 
     // Talking Points

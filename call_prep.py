@@ -59,11 +59,12 @@ def _build_prompt(account: dict) -> str:
     prompt = f"""Quick prep for {name} ({industry} on {platform}, {revenue} GMV, {country}).
 
 Generate:
-1. A brief opening line (Jason Bay style — direct, value-focused, no fluff). Max 1-2 sentences.
-2. ONE-LINER bullets only: 3 talking points, 3 discovery questions, 3 objections with responses.
+1. "opening" — conversational script for when they answer. Include: [First name], [Your name], platform name ({platform}), platform-specific pain point. Start with "Hi [First name]..."
+2. "voicemail" — 22 seconds max. Value-focused. Platform pain point. Start with "Hi [First name]..."
+3. ONE-LINER bullets only: 3 talking points, 3 discovery questions, 3 objections with responses.
 
 Return ONLY this JSON (no other text, no markdown, no escapes):
-{{"intro": "brief opening", "talking_points": [{{"headline": "point 1", "detail": ""}}], "discovery_questions": [{{"question": "question 1", "why": ""}}], "objection_handlers": [{{"objection": "objection 1", "response": "response 1"}}]}}"""
+{{"opening": "Hi [First name], [Your name]...", "voicemail": "Hi [First name], [Your name]...", "talking_points": [{{"headline": "point 1", "detail": ""}}], "discovery_questions": [{{"question": "question 1", "why": ""}}], "objection_handlers": [{{"objection": "objection 1", "response": "response 1"}}]}}"""
 
     return prompt
 
@@ -104,21 +105,22 @@ def generate_call_prep(account: dict) -> dict:
     except json.JSONDecodeError as e:
         # Fallback: return generic prep
         prep = {
-            "intro": "Hi this is Jack from Shopify. We work with leading brands like yours scaling commerce.",
+            "opening": "Hi [First name], [Your name] from Shopify — I hope now's not a bad moment? I reached out earlier about your platform. How long have you been on it and how are you finding it?",
+            "voicemail": "Hi [First name], [Your name] from Shopify. I emailed about platform maintenance and scaling. Just some insights that tend to surprise people. My number is [number], or reply to the email. Thanks.",
             "talking_points": [
-                {"headline": "Helping brands handle 10x growth", "detail": ""},
-                {"headline": "Platform migration to Plus", "detail": ""},
-                {"headline": "Unlock new revenue streams", "detail": ""}
+                {"headline": "Industry-specific growth challenges", "detail": ""},
+                {"headline": "Platform capability gaps", "detail": ""},
+                {"headline": "Plus features that unlock revenue", "detail": ""}
             ],
             "discovery_questions": [
-                {"question": "What are your key growth priorities?", "why": "Understand strategic focus"},
-                {"question": "How are you currently handling peak traffic?", "why": "Identify scaling gaps"},
-                {"question": "What features matter most?", "why": "Align on Plus capabilities"}
+                {"question": "What's your biggest growth bottleneck right now?", "why": "Understand pain points"},
+                {"question": "How are you handling [platform]-specific limitations?", "why": "Identify platform friction"},
+                {"question": "What would 10x growth require?", "why": "Assess Plus fit"}
             ],
             "objection_handlers": [
-                {"objection": "Timing isn't right", "response": "When would be the right time to reconnect?"},
-                {"objection": "We're happy with our platform", "response": "What would make a move worth considering?"},
-                {"objection": "Cost is a concern", "response": "What growth level would justify investment?"}
+                {"objection": "Timing isn't right", "response": "When would be ideal to reconnect?"},
+                {"objection": "We're happy with our platform", "response": "What would make a change worth considering?"},
+                {"objection": "We're not interested in migration", "response": "What if you didn't have to migrate everything at once?"}
             ],
             "error": False
         }

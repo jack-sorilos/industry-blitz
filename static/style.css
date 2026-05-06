@@ -420,15 +420,29 @@ body {
     line-height: 1.6;
 }
 
-.prep-intro {
+.prep-script {
     background: #f0f9f7;
     border-left: 4px solid var(--accent);
     padding: 12px;
-    margin-bottom: 20px;
+    margin-bottom: 12px;
     border-radius: 4px;
     font-size: 13px;
     line-height: 1.6;
+}
+
+.script-label {
+    font-weight: 600;
+    color: var(--accent);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+}
+
+.script-text {
     color: var(--text-primary);
+    line-height: 1.6;
+    font-size: 13px;
 }
 
 .prep-section {
